@@ -1,16 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using OrmBenchmark.Core;
 using ORMToolkit.Core;
-using ORMToolkit.Core.Factories;
 using ORMToolkit.Core.CacheProvider;
-using OrmBenchmark.Core;
+using ORMToolkit.Core.Factories;
+using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 
 namespace OrmBenchmark.OrmToolkit
 {
     public class OrmToolkitNoQueryExecuter : IOrmWithCacheExecuter
     {
-        DbConnection conn;
+        private DbConnection conn;
 
         public string Name
         {
@@ -26,7 +26,6 @@ namespace OrmBenchmark.OrmToolkit
         {
             DatabaseType = databaseType;
             conn = databaseType.GetOpenedConnection(connectionString);
-
         }
 
         public IPost GetItemAsObject(int Id)
@@ -48,6 +47,7 @@ namespace OrmBenchmark.OrmToolkit
         {
             return conn.GetAll("Posts").ToList();
         }
+
         public void Dispose()
         {
             conn.Close();

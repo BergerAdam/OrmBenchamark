@@ -1,18 +1,19 @@
 ﻿using OrmBenchmark.Core;
-using System.Collections.Generic;
 using ORMToolkit.Core;
-using ORMToolkit.Core.Factories;
 using ORMToolkit.Core.CacheProvider;
-using System.Linq;
+using ORMToolkit.Core.Factories;
+using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 
 namespace OrmBenchmark.OrmToolkit
 {
     public class OrmToolkitExecuter : IOrmWithCacheExecuter
     {
-        DbConnection conn;
+        private DbConnection conn;
 
         public DatabaseType DatabaseType { get; private set; }
+
         public string Name
         {
             get
@@ -46,10 +47,10 @@ namespace OrmBenchmark.OrmToolkit
         {
             return conn.Query("select * from Posts").ToList();
         }
- 
+
         public void Dispose()
         {
-             conn.Close();
+            conn.Close();
         }
 
         public void ClearCache()

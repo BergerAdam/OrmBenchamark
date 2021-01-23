@@ -1,19 +1,14 @@
 ﻿using Dapper;
-using MySql.Data.MySqlClient;
-using Npgsql;
 using OrmBenchmark.Core;
-using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 
 namespace OrmBenchmark.Dapper
 {
     public class DapperExecuter : IOrmExecuter
     {
-        IDbConnection conn;
+        private IDbConnection conn;
         public DatabaseType DatabaseType { get; private set; }
 
         public string Name
@@ -66,6 +61,5 @@ namespace OrmBenchmark.Dapper
         }
 
         public bool IsSupported(DatabaseType databaseType) => true;
-
     }
 }

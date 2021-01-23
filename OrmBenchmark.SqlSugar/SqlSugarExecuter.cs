@@ -1,16 +1,16 @@
-﻿using System;
+﻿using OrmBenchmark.Core;
+using SqlSugar;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using OrmBenchmark.Core;
-using SqlSugar;
 
 namespace OrmBenchmark.SqlSugar
 {
     public class SqlSugarExecuter : IOrmExecuter
     {
         public string Name => "SqlSugar";
-        SqlSugarClient db;
-        public DatabaseType DatabaseType { get;private  set; }
+        private SqlSugarClient db;
+        public DatabaseType DatabaseType { get; private set; }
 
         public void Init(string connectionString, DatabaseType databaseType)
         {
@@ -30,10 +30,13 @@ namespace OrmBenchmark.SqlSugar
             {
                 case DatabaseType.PostgreSql:
                     return DbType.PostgreSQL;
+
                 case DatabaseType.MySql:
                     return DbType.MySql;
+
                 case DatabaseType.SqlServer:
                     return DbType.SqlServer;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -41,7 +44,7 @@ namespace OrmBenchmark.SqlSugar
 
         public IEnumerable<dynamic> GetAllItemsAsDynamic()
         {
-           return db.SqlQueryable<dynamic>("select * from Posts").ToList();
+            return db.SqlQueryable<dynamic>("select * from Posts").ToList();
         }
 
         public IEnumerable<IPost> GetAllItemsAsObject()
@@ -52,7 +55,6 @@ namespace OrmBenchmark.SqlSugar
         public dynamic GetItemAsDynamic(int Id)
         {
             return db.SqlQueryable<dynamic>($"select * from Posts where Id = {Id}").Single();
-
         }
 
         public IPost GetItemAsObject(int Id)
@@ -64,8 +66,6 @@ namespace OrmBenchmark.SqlSugar
         {
             db.Close();
         }
-
-
 
         private readonly DatabaseType[] Supported = new[]
      {

@@ -22,7 +22,6 @@ namespace OrmBenchmark.NHibernate
         //public virtual  int NotExistColumn { get; set; }
     }
 
-
     public class PostMap : ClassMap<Post>
     {
         public PostMap()

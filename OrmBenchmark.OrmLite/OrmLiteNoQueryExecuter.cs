@@ -5,15 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 
 namespace OrmBenchmark.OrmLite
 {
     public class OrmLiteNoQueryExecuter : IOrmExecuter
     {
-        IDbConnection conn;
-        OrmLiteConnectionFactory dbFactory;
-        public DatabaseType DatabaseType { get;private set; }
+        private IDbConnection conn;
+        private OrmLiteConnectionFactory dbFactory;
+        public DatabaseType DatabaseType { get; private set; }
 
         public string Name
         {
@@ -36,24 +35,26 @@ namespace OrmBenchmark.OrmLite
             {
                 case DatabaseType.MySql:
                     return MySqlDialect.Provider;
+
                 case DatabaseType.MySqlConnector:
                     return MySqlConnectorDialect.Provider;
+
                 case DatabaseType.PostgreSql:
                     {
                         var provider = PostgreSqlDialect.Provider;
                         provider.NamingStrategy = new AliasNamingStrategy();
                         return provider;
-
                     }
                 case DatabaseType.SqlServer:
                     return SqlServerDialect.Provider;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
         public IPost GetItemAsObject(int Id)
-        {            
+        {
             return conn.Single<Post>(new { Id });
         }
 
@@ -108,10 +109,10 @@ namespace OrmBenchmark.OrmLite
 
             return conn.Select<dynamic>(q).AsList();
         }
+
         public void Dispose()
         {
-
-            if(conn.State == ConnectionState.Open)
+            if (conn.State == ConnectionState.Open)
             {
                 conn.Close();
             }

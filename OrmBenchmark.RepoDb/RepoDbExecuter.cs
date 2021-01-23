@@ -10,7 +10,7 @@ namespace OrmBenchmark.RepoDb
 {
     public class RepoDbExecuter : IOrmExecuter
     {
-        IDbConnection conn;
+        private IDbConnection conn;
 
         public DatabaseType DatabaseType { get; private set; }
 
@@ -27,21 +27,24 @@ namespace OrmBenchmark.RepoDb
             DatabaseType = databaseType;
             conn = DatabaseType.GetAndConfigureConnection<IDbConnection>(connectionString, (connection, dbType) =>
             {
-
                 switch (dbType)
                 {
                     case DatabaseType.MySql:
                         MySqlBootstrap.Initialize();
                         break;
+
                     case DatabaseType.PostgreSql:
                         PostgreSqlBootstrap.Initialize();
                         break;
+
                     case DatabaseType.SqlServer:
                         SqlServerBootstrap.Initialize();
                         break;
+
                     case DatabaseType.MySqlConnector:
                         MySqlConnectorBootstrap.Initialize();
                         break;
+
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -49,7 +52,6 @@ namespace OrmBenchmark.RepoDb
                 connection.Open();
                 return connection;
             });
-
         }
 
         public void Dispose()
@@ -89,5 +91,3 @@ namespace OrmBenchmark.RepoDb
         public bool IsSupported(DatabaseType databaseType) => true;
     }
 }
-
-

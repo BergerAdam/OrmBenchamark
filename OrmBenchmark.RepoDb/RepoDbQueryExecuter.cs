@@ -1,20 +1,17 @@
-﻿using MySql.Data.MySqlClient;
-using Npgsql;
-using OrmBenchmark.Core;
+﻿using OrmBenchmark.Core;
 using RepoDb;
 using RepoDb.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
 
 namespace OrmBenchmark.RepoDb
 {
     public class RepoDbQueryExecuter : IOrmExecuter
     {
-        DbConnection conn;
+        private DbConnection conn;
 
         public DatabaseType DatabaseType { get; private set; }
 
@@ -31,21 +28,24 @@ namespace OrmBenchmark.RepoDb
             DatabaseType = databaseType;
             conn = DatabaseType.GetAndConfigureConnection(connectionString, (connection, dbType) =>
             {
-
                 switch (dbType)
                 {
                     case DatabaseType.MySql:
                         MySqlBootstrap.Initialize();
                         break;
+
                     case DatabaseType.PostgreSql:
                         PostgreSqlBootstrap.Initialize();
                         break;
+
                     case DatabaseType.SqlServer:
                         SqlServerBootstrap.Initialize();
                         break;
+
                     case DatabaseType.MySqlConnector:
                         MySqlConnectorBootstrap.Initialize();
                         break;
+
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -65,8 +65,6 @@ namespace OrmBenchmark.RepoDb
             CommandTextCache.Flush();
 
             conn.Dispose();
-
-
         }
 
         public IEnumerable<IPost> GetAllItemsAsObject()

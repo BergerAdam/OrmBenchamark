@@ -7,7 +7,7 @@ namespace OrmBenchmark.EntityFramework
 {
     public class EntityFrameworkNoTrackingExecuter : IOrmExecuter
     {
-        OrmBenchmarkContext ctx;
+        private OrmBenchmarkContext ctx;
         public DatabaseType DatabaseType { get; private set; }
 
         public string Name
@@ -27,7 +27,6 @@ namespace OrmBenchmark.EntityFramework
         public IPost GetItemAsObject(int Id)
         {
             return ctx.Posts.AsNoTracking().Single(p => p.Id == Id);
-
         }
 
         public dynamic GetItemAsDynamic(int Id)

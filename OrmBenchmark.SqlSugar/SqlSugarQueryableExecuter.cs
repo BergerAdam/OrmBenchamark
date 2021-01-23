@@ -1,16 +1,16 @@
-﻿using System;
+﻿using OrmBenchmark.Core;
+using SqlSugar;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using OrmBenchmark.Core;
-using SqlSugar;
 
 namespace OrmBenchmark.SqlSugar
 {
     public class SqlSugarQueryableExecuter : IOrmExecuter
     {
         public string Name => "SqlSugar (Queryable)";
-        SqlSugarClient db;
-        public DatabaseType DatabaseType { get;private  set; }
+        private SqlSugarClient db;
+        public DatabaseType DatabaseType { get; private set; }
 
         public void Init(string connectionString, DatabaseType databaseType)
         {
@@ -30,10 +30,13 @@ namespace OrmBenchmark.SqlSugar
             {
                 case DatabaseType.PostgreSql:
                     return DbType.PostgreSQL;
+
                 case DatabaseType.MySql:
                     return DbType.MySql;
+
                 case DatabaseType.SqlServer:
                     return DbType.SqlServer;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }

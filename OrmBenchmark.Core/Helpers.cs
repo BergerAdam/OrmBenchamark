@@ -14,12 +14,16 @@ namespace OrmBenchmark.Core
             {
                 case DatabaseType.MySql:
                     return "MySql.Data.MySqlClient";
+
                 case DatabaseType.PostgreSql:
                     return "Npgsql";
+
                 case DatabaseType.SqlServer:
                     return "System.Data.SqlClient";
+
                 case DatabaseType.MySqlConnector:
                     return "MySqlConnector";
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -31,12 +35,16 @@ namespace OrmBenchmark.Core
             {
                 case DatabaseType.MySql:
                     return new MySqlConnection(connectionString);
+
                 case DatabaseType.MySqlConnector:
                     return new MySqlConnector.MySqlConnection(connectionString);
+
                 case DatabaseType.PostgreSql:
                     return new NpgsqlConnection(connectionString);
+
                 case DatabaseType.SqlServer:
                     return new SqlConnection(connectionString);
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }

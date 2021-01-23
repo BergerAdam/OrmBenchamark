@@ -4,39 +4,38 @@ using System;
 
 namespace OrmBenchmark.DevExpress
 {
-
     [Persistent(mapTo: "Posts")]
-    public class Post : XPLiteObject ,IPost
-    {       
+    public class Post : XPLiteObject, IPost
+    {
         public Post(Session session)
         : base(session)
         {
         }
 
         [Key(true)]
-
         public int Id
         {
             get { return fId; }
             set { SetPropertyValue(nameof(Id), ref fId, value); }
         }
-        int fId;
 
+        private int fId;
 
         public string Text
         {
             get { return fText; }
             set { SetPropertyValue(nameof(Text), ref fText, value); }
         }
-        string fText;
 
+        private string fText;
 
         public DateTime CreationDate
         {
             get { return fCreationDate; }
             set { SetPropertyValue(nameof(CreationDate), ref fCreationDate, value); }
         }
-        DateTime fCreationDate;
+
+        private DateTime fCreationDate;
 
         public DateTime LastChangeDate
         {
@@ -44,8 +43,7 @@ namespace OrmBenchmark.DevExpress
             set { SetPropertyValue(nameof(LastChangeDate), ref fLastChangeDate, value); }
         }
 
-        DateTime fLastChangeDate;
-
+        private DateTime fLastChangeDate;
 
         public int? Counter1
         {
@@ -53,7 +51,7 @@ namespace OrmBenchmark.DevExpress
             set { SetPropertyValue(nameof(Counter1), ref fCounter1, value); }
         }
 
-        int? fCounter1;
+        private int? fCounter1;
 
         public int? Counter2
         {
@@ -61,7 +59,7 @@ namespace OrmBenchmark.DevExpress
             set { SetPropertyValue(nameof(Counter2), ref fCounter2, value); }
         }
 
-        int? fCounter2;
+        private int? fCounter2;
 
         public int? Counter3
         {
@@ -69,7 +67,7 @@ namespace OrmBenchmark.DevExpress
             set { SetPropertyValue(nameof(Counter3), ref fCounter3, value); }
         }
 
-        int? fCounter3;
+        private int? fCounter3;
 
         public int? Counter4
         {
@@ -77,7 +75,7 @@ namespace OrmBenchmark.DevExpress
             set { SetPropertyValue(nameof(Counter4), ref fCounter4, value); }
         }
 
-        int? fCounter4;
+        private int? fCounter4;
 
         public int? Counter5
         {
@@ -85,7 +83,7 @@ namespace OrmBenchmark.DevExpress
             set { SetPropertyValue(nameof(Counter5), ref fCounter5, value); }
         }
 
-        int? fCounter5;
+        private int? fCounter5;
 
         public int? Counter6
         {
@@ -93,7 +91,7 @@ namespace OrmBenchmark.DevExpress
             set { SetPropertyValue(nameof(Counter6), ref fCounter6, value); }
         }
 
-        int? fCounter6;
+        private int? fCounter6;
 
         public int? Counter7
         {
@@ -101,7 +99,7 @@ namespace OrmBenchmark.DevExpress
             set { SetPropertyValue(nameof(Counter7), ref fCounter7, value); }
         }
 
-        int? fCounter7;
+        private int? fCounter7;
 
         public int? Counter8
         {
@@ -109,7 +107,7 @@ namespace OrmBenchmark.DevExpress
             set { SetPropertyValue(nameof(Counter8), ref fCounter8, value); }
         }
 
-        int? fCounter8;
+        private int? fCounter8;
 
         public int? Counter9
         {
@@ -117,7 +115,7 @@ namespace OrmBenchmark.DevExpress
             set { SetPropertyValue(nameof(Counter9), ref fCounter9, value); }
         }
 
-        int? fCounter9;
+        private int? fCounter9;
     }
 
     //
@@ -125,17 +123,14 @@ namespace OrmBenchmark.DevExpress
     //{
     //    public PostSqlServer(Session session):base(session)
     //    {
-
     //    }
     //}
-
 
     //[Persistent(mapTo: "posts")]
     //public class PostMySql : Post
     //{
     //    public PostMySql(Session session) : base(session)
     //    {
-
     //    }
     //}
 
@@ -144,7 +139,6 @@ namespace OrmBenchmark.DevExpress
     //{
     //    public PostPostegres(Session session) : base(session)
     //    {
-
     //    }
     //}
 }

@@ -4,7 +4,7 @@ using System;
 
 namespace OrmBenchmark.EntityFramework
 {
-    class OrmBenchmarkContext : DbContext
+    internal class OrmBenchmarkContext : DbContext
     {
         private string ConnectionString;
         private readonly DatabaseType _databaseType;
@@ -22,21 +22,22 @@ namespace OrmBenchmark.EntityFramework
             switch (_databaseType)
             {
                 case DatabaseType.MySqlConnector:
-                    optionsBuilder.UseMySql(ConnectionString, new MySqlServerVersion(new Version(5,7,32)));
+                    optionsBuilder.UseMySql(ConnectionString, new MySqlServerVersion(new Version(5, 7, 32)));
 
                     break;
+
                 case DatabaseType.PostgreSql:
                     optionsBuilder.UseNpgsql(ConnectionString);
 
                     break;
+
                 case DatabaseType.SqlServer:
                     optionsBuilder.UseSqlServer(ConnectionString);
                     break;
+
                 default:
                     break;
             }
         }
-
-
     }
 }

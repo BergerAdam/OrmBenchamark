@@ -10,10 +10,15 @@ namespace OrmBenchmark.Core
         bool IsSupported(DatabaseType databaseType);
 
         DatabaseType DatabaseType { get; }
+
         void Init(string connectionString, DatabaseType databaseType);
+
         IPost GetItemAsObject(int Id);
+
         dynamic GetItemAsDynamic(int Id);
+
         IEnumerable<IPost> GetAllItemsAsObject();
+
         IEnumerable<dynamic> GetAllItemsAsDynamic();
     }
 

@@ -2,14 +2,14 @@
 using SqlSugar;
 using System;
 
-
 namespace OrmBenchmark.SqlSugar
 {
-    [SugarTable(tableName:"Posts")]
+    [SugarTable(tableName: "Posts")]
     public class Post : IPost
     {
         [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
         public int Id { get; set; }
+
         public string Text { get; set; }
         public DateTime CreationDate { get; set; }
         public DateTime LastChangeDate { get; set; }

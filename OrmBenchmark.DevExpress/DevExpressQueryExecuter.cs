@@ -5,17 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 
 namespace OrmBenchmark.DevExpress
 {
     public class DevExpressQueryExecuter : IOrmExecuter
     {
-        UnitOfWork uow;
-        public DatabaseType DatabaseType { get;private set; }
-
-
-        
+        private UnitOfWork uow;
+        public DatabaseType DatabaseType { get; private set; }
 
         public string Name
         {
@@ -28,7 +24,7 @@ namespace OrmBenchmark.DevExpress
         public void Init(string connectionString, DatabaseType databaseType)
         {
             DatabaseType = databaseType;
-            XpoDefault.DataLayer = XpoDefault.GetDataLayer(CreateConnectionString(connectionString,databaseType), AutoCreateOption.DatabaseAndSchema);
+            XpoDefault.DataLayer = XpoDefault.GetDataLayer(CreateConnectionString(connectionString, databaseType), AutoCreateOption.DatabaseAndSchema);
 
             uow = new UnitOfWork();
         }
@@ -41,12 +37,15 @@ namespace OrmBenchmark.DevExpress
                 case DatabaseType.MySql:
                     xpoProvider = "MySql";
                     break;
+
                 case DatabaseType.PostgreSql:
                     xpoProvider = "Postgres";
                     break;
+
                 case DatabaseType.SqlServer:
                     xpoProvider = "MSSqlServer";
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -57,7 +56,6 @@ namespace OrmBenchmark.DevExpress
         public IPost GetItemAsObject(int Id)
         {
             return uow.Query<Post>().Where(i => i.Id == Id).Single();
-
         }
 
         public dynamic GetItemAsDynamic(int Id)
@@ -111,9 +109,10 @@ namespace OrmBenchmark.DevExpress
 
             return q.ToList();
         }
+
         public void Dispose()
         {
-            if(XpoDefault.DataLayer.Connection.State == ConnectionState.Open)
+            if (XpoDefault.DataLayer.Connection.State == ConnectionState.Open)
             {
                 XpoDefault.DataLayer.Connection.Close();
             }

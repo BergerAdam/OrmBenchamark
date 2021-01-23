@@ -1,18 +1,14 @@
 ﻿using Dapper;
-using MySql.Data.MySqlClient;
-using Npgsql;
 using OrmBenchmark.Core;
-using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 
 namespace OrmBenchmark.Dapper
 {
     public class DapperBufferedExecuter : IOrmExecuter
     {
-        IDbConnection conn;
+        private IDbConnection conn;
 
         public DatabaseType DatabaseType { get; private set; }
 

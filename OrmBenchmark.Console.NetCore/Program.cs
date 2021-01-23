@@ -3,9 +3,14 @@ using OrmBenchmark.Ado;
 using OrmBenchmark.Core;
 using OrmBenchmark.Dapper;
 using OrmBenchmark.DevExpress;
-using OrmBenchmark.RepoDb;
 using OrmBenchmark.EntityFramework;
+using OrmBenchmark.InsightDatabase;
+using OrmBenchmark.NHibernate;
 using OrmBenchmark.OrmLite;
+using OrmBenchmark.OrmToolkit;
+using OrmBenchmark.PetaPoco;
+using OrmBenchmark.RepoDb;
+using OrmBenchmark.SqlSugar;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -15,17 +20,12 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Versioning;
-using OrmBenchmark.PetaPoco;
-using OrmBenchmark.InsightDatabase;
-using OrmBenchmark.OrmToolkit;
-using OrmBenchmark.SqlSugar;
-using OrmBenchmark.NHibernate;
 
 namespace OrmBenchmark.ConsoleUI.NetCore
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             Stopwatch stopWatch = Stopwatch.StartNew();
 
@@ -35,11 +35,9 @@ namespace OrmBenchmark.ConsoleUI.NetCore
            .AddJsonFile("appsettings.json", optional: false).Build();
             Console.ForegroundColor = ConsoleColor.White;
 
-
             Dictionary<DatabaseType, string> connectionStrings =
             configuration.GetSection("ConnectionStrings").GetChildren().ToList().ToDictionary(e => Enum.Parse<DatabaseType>(e.Key), e => e.Value);
             bool warmUp = true;
-
 
             Console.WriteLine("ORM Benchmark");
 
@@ -48,8 +46,6 @@ namespace OrmBenchmark.ConsoleUI.NetCore
             Dictionary<DatabaseType, string> connectionStateToBenchamrk = connectionStrings
                 //.Where(e => e.Key == DatabaseType.MySql)
                 .ToDictionary(e => e.Key, e => e.Value);
-
-
 
             foreach (var item in connectionStateToBenchamrk)
             {
@@ -74,7 +70,6 @@ namespace OrmBenchmark.ConsoleUI.NetCore
             benchmarker.RegisterOrmExecuter<EntityFrameworkExecuter>();
             benchmarker.RegisterOrmExecuter<EntityFrameworkNoTrackingExecuter>();
 
-
             benchmarker.RegisterOrmExecuter<OrmLiteExecuter>();
             benchmarker.RegisterOrmExecuter<OrmLiteNoQueryExecuter>();
 
@@ -86,7 +81,6 @@ namespace OrmBenchmark.ConsoleUI.NetCore
             benchmarker.RegisterOrmExecuter<OrmToolkitExecuter>();
             benchmarker.RegisterOrmExecuter<OrmToolkitNoQueryExecuter>();
             benchmarker.RegisterOrmExecuter<OrmToolkitTestExecuter>();
-
 
             benchmarker.RegisterOrmExecuter<SqlSugarExecuter>();
             benchmarker.RegisterOrmExecuter<SqlSugarQueryableExecuter>();
@@ -135,14 +129,12 @@ namespace OrmBenchmark.ConsoleUI.NetCore
             Console.WriteLine($"Test take {stopWatch.ElapsedMilliseconds}");
         }
 
-
         private static void SaveResults(Benchmarker benchmarker, Dictionary<DatabaseType, string> connectionStrings)
         {
             if (!connectionStrings.TryGetValue(DatabaseType.SqlServer, out string connectionString))
             {
                 return;
             }
-
 
             DateTime now = DateTime.Now;
             List<BenchmarkResult> resultsToAdd = new List<BenchmarkResult>();
@@ -196,11 +188,10 @@ namespace OrmBenchmark.ConsoleUI.NetCore
 
                     transaction.Commit();
                 }
-
             }
         }
 
-        static void ShowResults(List<BenchmarkResult> results, bool showFirstRun = false, bool ignoreZeroTimes = true)
+        private static void ShowResults(List<BenchmarkResult> results, bool showFirstRun = false, bool ignoreZeroTimes = true)
         {
             var defaultColor = Console.ForegroundColor;
             //Console.ForegroundColor = ConsoleColor.Gray;

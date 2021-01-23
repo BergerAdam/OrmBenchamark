@@ -1,14 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using OrmBenchmark.Core;
+﻿using OrmBenchmark.Core;
 using PetaPoco;
-
+using System.Collections.Generic;
+using System.Linq;
 
 namespace OrmBenchmark.PetaPoco
 {
     public class PetaPocoFetchFastExecuter : IOrmExecuter
     {
-        Database petapoco;
+        private Database petapoco;
         public DatabaseType DatabaseType { get; private set; }
 
         public string Name
@@ -55,8 +54,7 @@ namespace OrmBenchmark.PetaPoco
             petapoco.CloseSharedConnection();
             petapoco.Dispose();
         }
+
         public bool IsSupported(DatabaseType databaseType) => true;
-
-
     }
 }

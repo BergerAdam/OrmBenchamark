@@ -7,7 +7,7 @@ namespace OrmBenchmark.EntityFramework
 {
     public class EntityFrameworkExecuter : IOrmWithCacheExecuter
     {
-        OrmBenchmarkContext ctx;
+        private OrmBenchmarkContext ctx;
         public DatabaseType DatabaseType { get; private set; }
 
         public string Name
@@ -27,7 +27,6 @@ namespace OrmBenchmark.EntityFramework
         public IPost GetItemAsObject(int Id)
         {
             return ctx.Posts.Single(e => e.Id == Id);
-
         }
 
         public dynamic GetItemAsDynamic(int Id)
@@ -44,6 +43,7 @@ namespace OrmBenchmark.EntityFramework
         {
             return null;
         }
+
         public void Dispose()
         {
             ctx.Dispose();

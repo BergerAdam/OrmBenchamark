@@ -15,6 +15,7 @@ namespace OrmBenchmark.OrmLite
 
         [Alias("CreationDate")]
         public DateTime LastChangeDate { get; set; }
+
         public int? Counter1 { get; set; }
         public int? Counter2 { get; set; }
         public int? Counter3 { get; set; }

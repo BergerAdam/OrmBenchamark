@@ -1,14 +1,14 @@
-﻿using System;
+﻿using OrmBenchmark.Core;
+using System;
 using System.Collections.Generic;
-using OrmBenchmark.Core;
-using System.Dynamic;
 using System.Data;
+using System.Dynamic;
 
 namespace OrmBenchmark.Ado
 {
     public class PureAdoExecuter : IOrmExecuter
     {
-        IDbConnection conn;
+        private IDbConnection conn;
 
         public DatabaseType DatabaseType { get; private set; }
 
@@ -25,6 +25,7 @@ namespace OrmBenchmark.Ado
             DatabaseType = databaseType;
             conn = DatabaseType.GetOpenedConnection(connectionString);
         }
+
         public IPost GetItemAsObject(int id)
         {
             var cmd = SelectFromPostsByIdCommand(id);
@@ -36,7 +37,6 @@ namespace OrmBenchmark.Ado
 
             return null;
         }
-
 
         public dynamic GetItemAsDynamic(int id)
         {
@@ -85,7 +85,6 @@ namespace OrmBenchmark.Ado
 
         public IEnumerable<dynamic> GetAllItemsAsDynamic()
         {
-
             var cmd = conn.CreateCommand();
             cmd.CommandText = SelectAllPosts();
 
@@ -135,8 +134,10 @@ namespace OrmBenchmark.Ado
                 case DatabaseType.MySql:
                 case DatabaseType.MySqlConnector:
                     return @"select * from Posts";
+
                 case DatabaseType.PostgreSql:
                     return "select * from public.\"posts\" ";
+
                 case DatabaseType.SqlServer:
                     return @"select * from Posts";
             }
@@ -151,8 +152,10 @@ namespace OrmBenchmark.Ado
                 case DatabaseType.MySql:
                 case DatabaseType.MySqlConnector:
                     return @"select * from Posts where Id = @Id";
+
                 case DatabaseType.PostgreSql:
                     return "select * from public.\"posts\" where Id = @Id";
+
                 case DatabaseType.SqlServer:
                     return @"select * from Posts where Id = @Id";
             }

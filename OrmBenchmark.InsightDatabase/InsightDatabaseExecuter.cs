@@ -2,13 +2,10 @@
 using Insight.Database.Providers.MySql;
 using Insight.Database.Providers.MySqlConnector;
 using Insight.Database.Providers.PostgreSQL;
-using MySql.Data.MySqlClient;
-using Npgsql;
 using OrmBenchmark.Core;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
 
 namespace OrmBenchmark.InsightDatabase
@@ -50,32 +47,33 @@ namespace OrmBenchmark.InsightDatabase
         {
             DatabaseType = databaseType;
 
-          conn =  DatabaseType.GetAndConfigureConnection(connectionString, (dbConnection, dbtype) =>
-            {
-                switch (dbtype)
-                {
-                    case DatabaseType.MySql:
-                        MySqlInsightDbProvider.RegisterProvider();
-                        break;
-                    case DatabaseType.PostgreSql:
-                        PostgreSQLInsightDbProvider.RegisterProvider();
-                        break;
-                    case DatabaseType.SqlServer:
-                        SqlInsightDbProvider.RegisterProvider();
-                        break;
-                    case DatabaseType.MySqlConnector:
-                        MySqlConnectorInsightDbProvider.RegisterProvider();
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+            conn = DatabaseType.GetAndConfigureConnection(connectionString, (dbConnection, dbtype) =>
+             {
+                 switch (dbtype)
+                 {
+                     case DatabaseType.MySql:
+                         MySqlInsightDbProvider.RegisterProvider();
+                         break;
 
-                return dbConnection;
-            });
+                     case DatabaseType.PostgreSql:
+                         PostgreSQLInsightDbProvider.RegisterProvider();
+                         break;
 
-          
+                     case DatabaseType.SqlServer:
+                         SqlInsightDbProvider.RegisterProvider();
+                         break;
+
+                     case DatabaseType.MySqlConnector:
+                         MySqlConnectorInsightDbProvider.RegisterProvider();
+                         break;
+
+                     default:
+                         throw new ArgumentOutOfRangeException();
+                 }
+
+                 return dbConnection;
+             });
         }
-
 
         public bool IsSupported(DatabaseType databaseType) => true;
     }

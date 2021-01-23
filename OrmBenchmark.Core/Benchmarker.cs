@@ -35,7 +35,6 @@ namespace OrmBenchmark.Core
             ResultsWarmUp = new List<BenchmarkResult>();
             _idList = Enumerable.Range(1, 5000)
                                .OrderBy(i => Random.Next()).Take(iterationCount).ToList();
-
         }
 
         public void RegisterOrmExecuter<TOrmExecuter>() where TOrmExecuter : IOrmExecuter
@@ -45,7 +44,6 @@ namespace OrmBenchmark.Core
 
         public void Run(bool warmUp = false)
         {
-
             Results.Clear();
             ResultsForDynamicItem.Clear();
             ResultsForAllItems.Clear();
@@ -66,7 +64,6 @@ namespace OrmBenchmark.Core
 
                     using (executer)
                     {
-                       
                         executer.Init(ConnectionStrings[database], database);
 
                         // Warm-up
@@ -139,7 +136,6 @@ namespace OrmBenchmark.Core
 
             ResultsForAllItems.Add(CreateResult(executer, GetNanoSeconds(stopwatch), nameof(GetAllItemsAsObjectTest)));
         }
-
 
         private static double GetNanoSeconds(Stopwatch stopwatch)
         {
@@ -236,19 +232,21 @@ namespace OrmBenchmark.Core
 
         private void PrepareDatabase(DatabaseType databaseType)
         {
-
             switch (databaseType)
             {
                 case DatabaseType.MySql:
                 case DatabaseType.MySqlConnector:
                     PrepareMySql();
                     break;
+
                 case DatabaseType.PostgreSql:
                     PreparePostgreSql();
                     break;
+
                 case DatabaseType.SqlServer:
                     PrepareSqlServer();
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -263,21 +261,21 @@ namespace OrmBenchmark.Core
                 cmd.CommandText = @"
 DROP Procedure IF EXISTS CreatePosts;
 
-CREATE procedure CreatePosts () 
+CREATE procedure CreatePosts ()
 DETERMINISTIC
-BEGIN 
+BEGIN
  DECLARE i int DEFAULT 0;
  IF NOT EXISTS(
-       SELECT * FROM information_schema.tables 
+       SELECT * FROM information_schema.tables
        Where table_name = 'Posts'
 )
- THEN 
- 
+ THEN
+
  create table Posts
 	                    (
-		                    Id int primary key AUTO_INCREMENT, 
-		                    Text varchar(2000) not null, 
-		                    CreationDate datetime not null, 
+		                    Id int primary key AUTO_INCREMENT,
+		                    Text varchar(2000) not null,
+		                    CreationDate datetime not null,
 		                    LastChangeDate datetime not null,
 		                    Counter1 int,
 		                    Counter2 int,
@@ -289,14 +287,12 @@ BEGIN
 		                    Counter8 int,
 		                    Counter9 int
 	                    );
-                        
-    
+
     WHILE i <= 5001 DO
         INSERT INTO Posts (Text, CreationDate,LastChangeDate) VALUES (REPEAT('x',2000) , NOW(),NOW());
         SET i = i + 1;
     END WHILE;
- 
- 
+
 END IF;
 
 END
@@ -311,7 +307,6 @@ END
                 cmd2.CommandType = CommandType.StoredProcedure;
                 cmd2.ExecuteNonQuery();
                 conn.Close();
-
             }
         }
 
@@ -328,15 +323,15 @@ CREATE OR REPLACE FUNCTION create_mytable()
   LANGUAGE plpgsql AS
 $func$
 BEGIN
-   IF EXISTS (SELECT FROM pg_catalog.pg_tables 
+   IF EXISTS (SELECT FROM pg_catalog.pg_tables
              where   tablename  = 'posts') THEN
       return;
    ELSE
       create table Posts
 	                    (
-		                    Id int primary key GENERATED ALWAYS AS IDENTITY , 
-		                    Text Text not null, 
-		                    CreationDate timestamp  not null, 
+		                    Id int primary key GENERATED ALWAYS AS IDENTITY ,
+		                    Text Text not null,
+		                    CreationDate timestamp  not null,
 		                    LastChangeDate timestamp  not null,
 		                    Counter1 int,
 		                    Counter2 int,
@@ -357,7 +352,7 @@ for r in 1..5001 loop
 end loop;
 end;
 $$;
-    
+
    END IF;
 END
 $func$;
@@ -381,9 +376,9 @@ select create_mytable()";
                     begin
 	                    create table Posts
 	                    (
-		                    Id int identity primary key, 
-		                    [Text] varchar(max) not null, 
-		                    CreationDate datetime not null, 
+		                    Id int identity primary key,
+		                    [Text] varchar(max) not null,
+		                    CreationDate datetime not null,
 		                    LastChangeDate datetime not null,
 		                    Counter1 int,
 		                    Counter2 int,
@@ -395,8 +390,8 @@ select create_mytable()";
 		                    Counter8 int,
 		                    Counter9 int
 	                    )
-	   
-	                    set nocount on 
+
+	                    set nocount on
 
 	                    declare @i int
 	                    declare @c int
@@ -404,10 +399,10 @@ select create_mytable()";
 	                    set @i = 0
 
 	                    while @i <= 5001
-	                    begin 
+	                    begin
 		                    insert Posts ([Text], CreationDate, LastChangeDate) values (replicate('x', 2000), GETDATE(), GETDATE())
 		                    set @id = @@IDENTITY
-		
+
 		                    set @i = @i + 1
 	                    end
                     end";

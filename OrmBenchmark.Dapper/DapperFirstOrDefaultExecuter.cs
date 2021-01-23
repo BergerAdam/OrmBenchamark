@@ -1,17 +1,13 @@
 ﻿using Dapper;
-using MySql.Data.MySqlClient;
-using Npgsql;
 using OrmBenchmark.Core;
-using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 
 namespace OrmBenchmark.Dapper
 {
     public class DapperFirstOrDefaultExecuter : IOrmExecuter
     {
-        IDbConnection conn;
+        private IDbConnection conn;
         public DatabaseType DatabaseType { get; private set; }
 
         public string Name
@@ -21,7 +17,6 @@ namespace OrmBenchmark.Dapper
                 return "Dapper Query (First Or Default)";
             }
         }
-
 
         public void Init(string connectionString, DatabaseType databaseType)
         {
@@ -35,7 +30,7 @@ namespace OrmBenchmark.Dapper
 
         public IPost GetItemAsObject(int Id)
         {
-            return conn.QueryFirstOrDefault<Post>("select * from Posts where Id=@Id", new { Id});
+            return conn.QueryFirstOrDefault<Post>("select * from Posts where Id=@Id", new { Id });
         }
 
         public dynamic GetItemAsDynamic(int Id)
@@ -63,6 +58,5 @@ namespace OrmBenchmark.Dapper
         }
 
         public bool IsSupported(DatabaseType databaseType) => true;
-
     }
 }

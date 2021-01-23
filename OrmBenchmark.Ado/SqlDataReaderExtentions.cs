@@ -7,7 +7,7 @@ namespace OrmBenchmark.Ado
     {
         public static Post MapToPost(this IDataReader reader)
         {
-           return new Post
+            return new Post
             {
                 Id = reader.GetInt32(0),
                 Text = reader.GetString(1),

@@ -8,8 +8,6 @@ using OrmBenchmark.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OrmBenchmark.NHibernate
 {
@@ -31,6 +29,7 @@ namespace OrmBenchmark.NHibernate
         }
 
         private ISessionFactory SessionFactory;
+
         public void Init(string connectionString, DatabaseType databaseType)
         {
             DatabaseType = databaseType;
@@ -49,12 +48,16 @@ namespace OrmBenchmark.NHibernate
             {
                 case DatabaseType.PostgreSql:
                     return PostgreSQLConfiguration.Standard.ConnectionString(connectionString);
+
                 case DatabaseType.MySql:
                     return MySQLConfiguration.Standard.Driver<MySqlDataDriver>().ConnectionString(connectionString);
+
                 case DatabaseType.SqlServer:
                     return MsSqlConfiguration.MsSql2012.ConnectionString(connectionString);
+
                 case DatabaseType.MySqlConnector:
                     return MySQLConfiguration.Standard.Driver<MySqlConnectorDriver>().ConnectionString(connectionString);
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }

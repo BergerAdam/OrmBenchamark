@@ -1,16 +1,15 @@
-﻿using System;
+﻿using OrmBenchmark.Core;
+using PetaPoco;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using OrmBenchmark.Core;
-using PetaPoco;
 
 namespace OrmBenchmark.PetaPoco
 {
     public class PetaPocoFastExecuter : IOrmExecuter
     {
-        Database petapoco;
+        private Database petapoco;
         public DatabaseType DatabaseType { get; private set; }
+
         public string Name
         {
             get
@@ -55,7 +54,5 @@ namespace OrmBenchmark.PetaPoco
         }
 
         public bool IsSupported(DatabaseType databaseType) => true;
-
-
     }
 }

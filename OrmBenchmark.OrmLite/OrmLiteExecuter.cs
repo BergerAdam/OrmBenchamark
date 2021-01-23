@@ -9,8 +9,8 @@ namespace OrmBenchmark.OrmLite
 {
     public class OrmLiteExecuter : IOrmExecuter
     {
-        IDbConnection conn;
-        OrmLiteConnectionFactory dbFactory;
+        private IDbConnection conn;
+        private OrmLiteConnectionFactory dbFactory;
         public DatabaseType DatabaseType { get; private set; }
 
         public string Name
@@ -34,12 +34,16 @@ namespace OrmBenchmark.OrmLite
             {
                 case DatabaseType.MySql:
                     return MySqlDialect.Provider;
+
                 case DatabaseType.MySqlConnector:
                     return MySqlConnectorDialect.Provider;
+
                 case DatabaseType.PostgreSql:
                     return PostgreSqlDialect.Provider;
+
                 case DatabaseType.SqlServer:
                     return SqlServerDialect.Provider;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -64,6 +68,7 @@ namespace OrmBenchmark.OrmLite
         {
             return conn.Select<dynamic>("select * from Posts");
         }
+
         public void Dispose()
         {
             if (conn.State == ConnectionState.Open)
