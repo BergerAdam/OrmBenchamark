@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<TargetFramework>net5.0</TargetFramework>
+	</PropertyGroup>
+
+  <!-- common NuGet package refs that affect all projects -->
+  <ItemGroup>
+  
+    <PackageReference Include="MySql.Data" Version="8.0.23" />
+  
+    <PackageReference Include="MySqlConnector" Version="1.2.1" />
+  
+    <PackageReference Include="Npgsql" Version="5.0.1.1" />
+  
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+  </ItemGroup>
+
+
+
+</Project>

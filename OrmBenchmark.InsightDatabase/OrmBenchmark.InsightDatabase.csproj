@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<TargetFramework>net5.0</TargetFramework>
+	</PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OrmBenchmark.Core\OrmBenchmark.Core.csproj" />
+    <PackageReference Include="Insight.Database.Core" Version="6.3.3" />
+    <PackageReference Include="Insight.Database.Providers.Default" Version="6.3.3" />
+    <PackageReference Include="Insight.Database.Providers.MySql" Version="6.3.3" />
+    <PackageReference Include="Insight.Database.Providers.MySqlConnector" Version="6.3.3" />
+    <PackageReference Include="Insight.Database.Providers.PostgreSQL" Version="6.3.3" />
+  </ItemGroup>
+
+</Project>

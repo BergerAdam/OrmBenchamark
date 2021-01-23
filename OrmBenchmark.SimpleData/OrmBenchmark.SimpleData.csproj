@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<TargetFramework>net5.0</TargetFramework>
+	</PropertyGroup>
+ 
+
+  <!-- common NuGet package refs that affect all projects -->
+  <ItemGroup>
+    <ProjectReference Include="..\OrmBenchmark.Core\OrmBenchmark.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Simple.Data.Ado" Version="0.19.0" />
+    <PackageReference Include="Simple.Data.Core" Version="0.19.0" />
+    <PackageReference Include="Simple.Data.Mysql" Version="0.19.0.6" />
+    <PackageReference Include="Simple.Data.PostgreSql" Version="0.17.0" />
+    <PackageReference Include="Simple.Data.SqlServer" Version="0.19.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+  </ItemGroup>
+</Project>
