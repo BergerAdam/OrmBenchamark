@@ -11,7 +11,7 @@ namespace OrmBenchmark.OrmLite
     {
         private IDbConnection conn;
         private OrmLiteConnectionFactory dbFactory;
-        public DatabaseType DatabaseType { get; private set; }
+        public DatabaseProvider DatabaseProvider { get; private set; }
 
         public string Name
         {
@@ -21,27 +21,28 @@ namespace OrmBenchmark.OrmLite
             }
         }
 
-        public void Init(string connectionStrong, DatabaseType databaseType)
+        public void Init(string connectionStrong, DatabaseProvider databaseType)
         {
-            DatabaseType = databaseType;
+            DatabaseProvider = databaseType;
             dbFactory = new OrmLiteConnectionFactory(connectionStrong, SelectDialect());
             conn = dbFactory.Open();
         }
 
         private IOrmLiteDialectProvider SelectDialect()
         {
-            switch (DatabaseType)
+            switch (DatabaseProvider)
             {
-                case DatabaseType.MySql:
+                case DatabaseProvider.MySqlData:
                     return MySqlDialect.Provider;
 
-                case DatabaseType.MySqlConnector:
+                case DatabaseProvider.MySqlConnector:
                     return MySqlConnectorDialect.Provider;
 
-                case DatabaseType.PostgreSql:
+                case DatabaseProvider.Npgsql:
                     return PostgreSqlDialect.Provider;
 
-                case DatabaseType.SqlServer:
+                case DatabaseProvider.SystemData:
+                case DatabaseProvider.MicrosoftData:
                     return SqlServerDialect.Provider;
 
                 default:
@@ -78,6 +79,6 @@ namespace OrmBenchmark.OrmLite
             conn.Dispose();
         }
 
-        public bool IsSupported(DatabaseType databaseType) => true;
+        public bool IsSupported(DatabaseProvider databaseType) => true;
     }
 }

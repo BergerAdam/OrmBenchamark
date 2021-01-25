@@ -11,7 +11,7 @@ namespace OrmBenchmark.DevExpress
     public class DevExpressQueryExecuter : IOrmExecuter
     {
         private UnitOfWork uow;
-        public DatabaseType DatabaseType { get; private set; }
+        public DatabaseProvider DatabaseProvider { get; private set; }
 
         public string Name
         {
@@ -21,31 +21,36 @@ namespace OrmBenchmark.DevExpress
             }
         }
 
-        public void Init(string connectionString, DatabaseType databaseType)
+        public void Init(string connectionString, DatabaseProvider databaseType)
         {
-            DatabaseType = databaseType;
-            XpoDefault.DataLayer = XpoDefault.GetDataLayer(CreateConnectionString(connectionString, databaseType), AutoCreateOption.DatabaseAndSchema);
+            DatabaseProvider = databaseType;
+            if(DatabaseProvider == DatabaseProvider.MicrosoftData || DatabaseProvider == DatabaseProvider.SystemData)
+            {
+               
+                XpoDefault.DataLayer = new SimpleDataLayer(new MSSqlConnectionProvider(DatabaseProvider.GetConnection(connectionString), AutoCreateOption.SchemaAlreadyExists));
 
+            }
+            else
+            {
+                XpoDefault.DataLayer = XpoDefault.GetDataLayer(CreateConnectionString(connectionString, databaseType), AutoCreateOption.SchemaAlreadyExists);
+
+            }
             uow = new UnitOfWork();
+
         }
 
-        private string CreateConnectionString(string connectionString, DatabaseType databaseType)
+        private string CreateConnectionString(string connectionString, DatabaseProvider databaseType)
         {
             string xpoProvider;
             switch (databaseType)
             {
-                case DatabaseType.MySql:
+                case DatabaseProvider.MySqlData:
                     xpoProvider = "MySql";
                     break;
 
-                case DatabaseType.PostgreSql:
+                case DatabaseProvider.Npgsql:
                     xpoProvider = "Postgres";
                     break;
-
-                case DatabaseType.SqlServer:
-                    xpoProvider = "MSSqlServer";
-                    break;
-
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -119,13 +124,14 @@ namespace OrmBenchmark.DevExpress
             uow.Dispose();
         }
 
-        private readonly DatabaseType[] Supported = new[]
+        private readonly DatabaseProvider[] Supported = new[]
         {
-           DatabaseType.MySql,
-           DatabaseType.SqlServer,
-           DatabaseType.PostgreSql
+           DatabaseProvider.MySqlData,
+           DatabaseProvider.SystemData,
+           DatabaseProvider.MicrosoftData,
+           DatabaseProvider.Npgsql
         };
 
-        public bool IsSupported(DatabaseType databaseType) => Supported.Contains(databaseType);
+        public bool IsSupported(DatabaseProvider databaseType) => Supported.Contains(databaseType);
     }
 }

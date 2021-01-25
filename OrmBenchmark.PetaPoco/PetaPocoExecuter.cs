@@ -8,7 +8,7 @@ namespace OrmBenchmark.PetaPoco
     public class PetaPocoExecuter : IOrmExecuter
     {
         private Database petapoco;
-        public DatabaseType DatabaseType { get; private set; }
+        public DatabaseProvider DatabaseProvider { get; private set; }
 
         public string Name
         {
@@ -18,9 +18,9 @@ namespace OrmBenchmark.PetaPoco
             }
         }
 
-        public void Init(string connectionStrong, DatabaseType databaseType)
+        public void Init(string connectionStrong, DatabaseProvider databaseType)
         {
-            DatabaseType = databaseType;
+            DatabaseProvider = databaseType;
             petapoco = new Database(connectionStrong, databaseType.GetProviderName());
             petapoco.OpenSharedConnection();
         }
@@ -51,6 +51,6 @@ namespace OrmBenchmark.PetaPoco
             petapoco.Dispose();
         }
 
-        public bool IsSupported(DatabaseType databaseType) => true;
+        public bool IsSupported(DatabaseProvider databaseType) => true;
     }
 }

@@ -35,15 +35,15 @@ namespace OrmBenchmark.ConsoleUI.NetCore
            .AddJsonFile("appsettings.json", optional: false).Build();
             Console.ForegroundColor = ConsoleColor.White;
 
-            Dictionary<DatabaseType, string> connectionStrings =
-            configuration.GetSection("ConnectionStrings").GetChildren().ToList().ToDictionary(e => Enum.Parse<DatabaseType>(e.Key), e => e.Value);
+            Dictionary<DatabaseProvider, string> connectionStrings =
+            configuration.GetSection("ConnectionStrings").GetChildren().ToList().ToDictionary(e => Enum.Parse<DatabaseProvider>(e.Key), e => e.Value);
             bool warmUp = true;
 
             Console.WriteLine("ORM Benchmark");
 
             Console.WriteLine("Warm Up: " + warmUp);
             Console.WriteLine("Connection Strings");
-            Dictionary<DatabaseType, string> connectionStateToBenchamrk = connectionStrings
+            Dictionary<DatabaseProvider, string> connectionStateToBenchamrk = connectionStrings
                 //.Where(e => e.Key == DatabaseType.MySql)
                 .ToDictionary(e => e.Key, e => e.Value);
 
@@ -129,9 +129,9 @@ namespace OrmBenchmark.ConsoleUI.NetCore
             Console.WriteLine($"Test take {stopWatch.ElapsedMilliseconds}");
         }
 
-        private static void SaveResults(Benchmarker benchmarker, Dictionary<DatabaseType, string> connectionStrings)
+        private static void SaveResults(Benchmarker benchmarker, Dictionary<DatabaseProvider, string> connectionStrings)
         {
-            if (!connectionStrings.TryGetValue(DatabaseType.SqlServer, out string connectionString))
+            if (!connectionStrings.TryGetValue(DatabaseProvider.SystemData, out string connectionString))
             {
                 return;
             }

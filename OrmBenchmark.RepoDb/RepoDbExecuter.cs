@@ -1,6 +1,9 @@
 ﻿using OrmBenchmark.Core;
 using RepoDb;
+using RepoDb.DbHelpers;
+using RepoDb.DbSettings;
 using RepoDb.Extensions;
+using RepoDb.StatementBuilders;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -12,7 +15,7 @@ namespace OrmBenchmark.RepoDb
     {
         private IDbConnection conn;
 
-        public DatabaseType DatabaseType { get; private set; }
+        public DatabaseProvider DatabaseProvider { get; private set; }
 
         public string Name
         {
@@ -22,26 +25,51 @@ namespace OrmBenchmark.RepoDb
             }
         }
 
-        public void Init(string connectionString, DatabaseType databaseType)
+        public void Init(string connectionString, DatabaseProvider databaseProvider)
         {
-            DatabaseType = databaseType;
-            conn = DatabaseType.GetAndConfigureConnection<IDbConnection>(connectionString, (connection, dbType) =>
+            DatabaseProvider = databaseProvider;
+            conn = DatabaseProvider.GetAndConfigureConnection<IDbConnection>(connectionString, (connection, dbType) =>
             {
                 switch (dbType)
                 {
-                    case DatabaseType.MySql:
+                    case DatabaseProvider.MySqlData:
                         MySqlBootstrap.Initialize();
                         break;
 
-                    case DatabaseType.PostgreSql:
+                    case DatabaseProvider.Npgsql:
                         PostgreSqlBootstrap.Initialize();
                         break;
 
-                    case DatabaseType.SqlServer:
-                        SqlServerBootstrap.Initialize();
-                        break;
+                    case DatabaseProvider.SystemData:
+                        {
+                            var dbSetting = new SqlServerDbSetting();
+                            DbSettingMapper.Add(typeof(System.Data.SqlClient.SqlConnection), dbSetting, true);
 
-                    case DatabaseType.MySqlConnector:
+                            // Map the DbHelper
+                            var dbHelper = new SqlServerDbHelper();
+                            DbHelperMapper.Add(typeof(System.Data.SqlClient.SqlConnection), dbHelper, true);
+
+                            // Map the Statement Builder
+                            var statementBuilder = new SqlServerStatementBuilder(dbSetting);
+                            StatementBuilderMapper.Add(typeof(System.Data.SqlClient.SqlConnection), statementBuilder, true);
+                            break;
+                        }
+                    case DatabaseProvider.MicrosoftData:
+                        {
+                            var dbSetting = new SqlServerDbSetting();
+                            DbSettingMapper.Add(typeof(Microsoft.Data.SqlClient.SqlConnection), dbSetting, true);
+                           
+                            // Map the DbHelper
+                            var dbHelper = new SqlServerDbHelper();
+                            DbHelperMapper.Add(typeof(Microsoft.Data.SqlClient.SqlConnection), dbHelper, true);
+
+                            // Map the Statement Builder
+                            var statementBuilder = new SqlServerStatementBuilder(dbSetting);
+                            StatementBuilderMapper.Add(typeof(Microsoft.Data.SqlClient.SqlConnection), statementBuilder, true);
+                            break;
+                        }
+
+                    case DatabaseProvider.MySqlConnector:
                         MySqlConnectorBootstrap.Initialize();
                         break;
 
@@ -60,6 +88,21 @@ namespace OrmBenchmark.RepoDb
             {
                 conn.Close();
             }
+
+            if (DatabaseProvider == DatabaseProvider.MicrosoftData)
+            {
+                DbSettingMapper.Remove<Microsoft.Data.SqlClient.SqlConnection>();
+                DbHelperMapper.Remove<Microsoft.Data.SqlClient.SqlConnection>();
+                StatementBuilderMapper.Remove<Microsoft.Data.SqlClient.SqlConnection>();
+            }
+
+            if (DatabaseProvider == DatabaseProvider.SystemData)
+            {
+                DbSettingMapper.Remove<System.Data.SqlClient.SqlConnection>();
+                DbHelperMapper.Remove<System.Data.SqlClient.SqlConnection>();
+                StatementBuilderMapper.Remove<System.Data.SqlClient.SqlConnection>();
+            }
+
 
             CommandTextCache.Flush();
 
@@ -88,6 +131,6 @@ namespace OrmBenchmark.RepoDb
             return conn.ExecuteQuery("select * from Posts").AsList();
         }
 
-        public bool IsSupported(DatabaseType databaseType) => true;
+        public bool IsSupported(DatabaseProvider databaseType) => true;
     }
 }

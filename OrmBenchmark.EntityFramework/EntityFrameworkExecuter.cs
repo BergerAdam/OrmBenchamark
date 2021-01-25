@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using OrmBenchmark.Core;
+﻿using OrmBenchmark.Core;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,7 +7,7 @@ namespace OrmBenchmark.EntityFramework
     public class EntityFrameworkExecuter : IOrmWithCacheExecuter
     {
         private OrmBenchmarkContext ctx;
-        public DatabaseType DatabaseType { get; private set; }
+        public DatabaseProvider DatabaseProvider { get; private set; }
 
         public string Name
         {
@@ -18,9 +17,9 @@ namespace OrmBenchmark.EntityFramework
             }
         }
 
-        public void Init(string connectionString, DatabaseType databaseType)
+        public void Init(string connectionString, DatabaseProvider databaseType)
         {
-            DatabaseType = databaseType;
+            DatabaseProvider = databaseType;
             ctx = new OrmBenchmarkContext(connectionString, databaseType);
         }
 
@@ -54,13 +53,6 @@ namespace OrmBenchmark.EntityFramework
             ctx.Posts.Local.Clear();
         }
 
-        private readonly DatabaseType[] Supported = new[]
-        {
-           DatabaseType.MySqlConnector,
-           DatabaseType.SqlServer,
-           DatabaseType.PostgreSql
-        };
-
-        public bool IsSupported(DatabaseType databaseType) => Supported.Contains(databaseType);
+        public bool IsSupported(DatabaseProvider databaseType) => true;
     }
 }

@@ -8,7 +8,7 @@ namespace OrmBenchmark.EntityFramework
     public class EntityFrameworkNoTrackingExecuter : IOrmExecuter
     {
         private OrmBenchmarkContext ctx;
-        public DatabaseType DatabaseType { get; private set; }
+        public DatabaseProvider DatabaseProvider { get; private set; }
 
         public string Name
         {
@@ -18,10 +18,10 @@ namespace OrmBenchmark.EntityFramework
             }
         }
 
-        public void Init(string connectionStrong, DatabaseType databaseType)
+        public void Init(string connectionStrong, DatabaseProvider databaseType)
         {
-            DatabaseType = databaseType;
-            ctx = new OrmBenchmarkContext(connectionStrong, DatabaseType);
+            DatabaseProvider = databaseType;
+            ctx = new OrmBenchmarkContext(connectionStrong, DatabaseProvider);
         }
 
         public IPost GetItemAsObject(int Id)
@@ -49,13 +49,13 @@ namespace OrmBenchmark.EntityFramework
             ctx.Dispose();
         }
 
-        private readonly DatabaseType[] Supported = new[]
+        private readonly DatabaseProvider[] Supported = new[]
         {
-           DatabaseType.MySqlConnector,
-           DatabaseType.SqlServer,
-           DatabaseType.PostgreSql
+           DatabaseProvider.MySqlConnector,
+           DatabaseProvider.SystemData,
+           DatabaseProvider.Npgsql
         };
 
-        public bool IsSupported(DatabaseType databaseType) => Supported.Contains(databaseType);
+        public bool IsSupported(DatabaseProvider databaseType) => Supported.Contains(databaseType);
     }
 }

@@ -9,7 +9,7 @@ namespace OrmBenchmark.Dapper
     public class DapperContribExecuter : IOrmExecuter
     {
         private IDbConnection conn;
-        public DatabaseType DatabaseType { get; private set; }
+        public DatabaseProvider DatabaseProvider { get; private set; }
 
         public string Name
         {
@@ -19,9 +19,9 @@ namespace OrmBenchmark.Dapper
             }
         }
 
-        public void Init(string connectionString, DatabaseType databaseType)
+        public void Init(string connectionString, DatabaseProvider databaseType)
         {
-            DatabaseType = databaseType;
+            DatabaseProvider = databaseType;
             conn = databaseType.GetAndConfigureConnection<IDbConnection>(connectionString, (dbConnection) =>
             {
                 dbConnection.Open();
@@ -58,6 +58,6 @@ namespace OrmBenchmark.Dapper
             conn.Dispose();
         }
 
-        public bool IsSupported(DatabaseType databaseType) => true;
+        public bool IsSupported(DatabaseProvider databaseType) => true;
     }
 }

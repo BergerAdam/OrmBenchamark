@@ -10,7 +10,7 @@ namespace OrmBenchmark.Ado
     {
         private IDbConnection conn;
 
-        public DatabaseType DatabaseType { get; private set; }
+        public DatabaseProvider DatabaseProvider { get; private set; }
 
         public string Name
         {
@@ -20,10 +20,10 @@ namespace OrmBenchmark.Ado
             }
         }
 
-        public void Init(string connectionString, DatabaseType databaseType)
+        public void Init(string connectionString, DatabaseProvider databaseType)
         {
-            DatabaseType = databaseType;
-            conn = DatabaseType.GetOpenedConnection(connectionString);
+            DatabaseProvider = databaseType;
+            conn = DatabaseProvider.GetOpenedConnection(connectionString);
         }
 
         public IPost GetItemAsObject(int id)
@@ -41,14 +41,14 @@ namespace OrmBenchmark.Ado
         public dynamic GetItemAsDynamic(int id)
         {
             var cmd = SelectFromPostsByIdCommand(id);
-            dynamic obj = new ExpandoObject();
+            var obj = new ExpandoObject() as IDictionary<string, object>;
             using (var reader = cmd.ExecuteReader())
             {
                 if (reader.Read())
                 {
                     for (int i = 0; i < reader.FieldCount; i++)
-                    {
-                        AddProperty(obj, reader.GetName(i), reader.GetValue(i));
+                    {                    
+                            obj.Add(reader.GetName(i), reader.GetValue(i));
                     }
                     return obj;
                 }
@@ -57,14 +57,7 @@ namespace OrmBenchmark.Ado
             return null;
         }
 
-        public static void AddProperty(ExpandoObject expando, string propertyName, object propertyValue)
-        {
-            var expandoDict = expando as IDictionary<string, object>;
-            if (expandoDict.ContainsKey(propertyName))
-                expandoDict[propertyName] = propertyValue;
-            else
-                expandoDict.Add(propertyName, propertyValue);
-        }
+
 
         public IEnumerable<IPost> GetAllItemsAsObject()
         {
@@ -93,11 +86,11 @@ namespace OrmBenchmark.Ado
             {
                 while (reader.Read())
                 {
-                    dynamic obj = new ExpandoObject();
+                    var obj = new ExpandoObject() as IDictionary<string, object>;
 
                     for (int i = 0; i < reader.FieldCount; i++)
                     {
-                        AddProperty(obj, reader.GetName(i), reader.GetValue(i));
+                        obj.Add(reader.GetName(i), reader.GetValue(i));
                     }
                     list.Add(obj);
                 }
@@ -129,16 +122,16 @@ namespace OrmBenchmark.Ado
 
         private string SelectAllPosts()
         {
-            switch (DatabaseType)
+            switch (DatabaseProvider)
             {
-                case DatabaseType.MySql:
-                case DatabaseType.MySqlConnector:
+                case DatabaseProvider.MySqlData:
+                case DatabaseProvider.MySqlConnector:
                     return @"select * from Posts";
 
-                case DatabaseType.PostgreSql:
+                case DatabaseProvider.Npgsql:
                     return "select * from public.\"posts\" ";
 
-                case DatabaseType.SqlServer:
+                case DatabaseProvider.SystemData:
                     return @"select * from Posts";
             }
 
@@ -147,22 +140,22 @@ namespace OrmBenchmark.Ado
 
         private string SelectFromPostsById()
         {
-            switch (DatabaseType)
+            switch (DatabaseProvider)
             {
-                case DatabaseType.MySql:
-                case DatabaseType.MySqlConnector:
+                case DatabaseProvider.MySqlData:
+                case DatabaseProvider.MySqlConnector:
                     return @"select * from Posts where Id = @Id";
 
-                case DatabaseType.PostgreSql:
+                case DatabaseProvider.Npgsql:
                     return "select * from public.\"posts\" where Id = @Id";
 
-                case DatabaseType.SqlServer:
+                case DatabaseProvider.SystemData:
                     return @"select * from Posts where Id = @Id";
             }
 
             throw new ArgumentOutOfRangeException();
         }
 
-        public bool IsSupported(DatabaseType databaseType) => true;
+        public bool IsSupported(DatabaseProvider databaseType) => true;
     }
 }

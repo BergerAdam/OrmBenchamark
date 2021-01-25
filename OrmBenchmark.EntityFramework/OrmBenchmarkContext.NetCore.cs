@@ -7,32 +7,36 @@ namespace OrmBenchmark.EntityFramework
     internal class OrmBenchmarkContext : DbContext
     {
         private string ConnectionString;
-        private readonly DatabaseType _databaseType;
+        private readonly DatabaseProvider _databaseProvider;
 
-        public OrmBenchmarkContext(string connectionStrong, DatabaseType databaseType)
+        public OrmBenchmarkContext(string connectionStrong, DatabaseProvider databaseProvider)
         {
             ConnectionString = connectionStrong;
-            _databaseType = databaseType;
+            _databaseProvider = databaseProvider;
         }
 
         public DbSet<Post> Posts { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            switch (_databaseType)
+            switch (_databaseProvider)
             {
-                case DatabaseType.MySqlConnector:
-                    optionsBuilder.UseMySql(ConnectionString, new MySqlServerVersion(new Version(5, 7, 32)));
-
+                case DatabaseProvider.MySqlConnector:
+                    MySqlDbContextOptionsBuilderExtensions.UseMySql(optionsBuilder, ConnectionString, new MySqlServerVersion(new Version(5, 7, 32)));
                     break;
 
-                case DatabaseType.PostgreSql:
+                case DatabaseProvider.MySqlData:
+                    MySQLDbContextOptionsExtensions.UseMySQL(optionsBuilder,ConnectionString);
+                    break;
+
+                case DatabaseProvider.Npgsql:
                     optionsBuilder.UseNpgsql(ConnectionString);
 
                     break;
 
-                case DatabaseType.SqlServer:
-                    optionsBuilder.UseSqlServer(ConnectionString);
+                case DatabaseProvider.SystemData:
+                case DatabaseProvider.MicrosoftData:
+                    optionsBuilder.UseSqlServer(_databaseProvider.GetConnection(ConnectionString));
                     break;
 
                 default:

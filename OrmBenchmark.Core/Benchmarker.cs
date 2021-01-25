@@ -19,10 +19,10 @@ namespace OrmBenchmark.Core
         public List<BenchmarkResult> ResultsWarmUp { get; set; }
         private int IterationCount { get; set; }
         private Random Random { get; set; }
-        private Dictionary<DatabaseType, string> ConnectionStrings { get; }
+        private Dictionary<DatabaseProvider, string> ConnectionStrings { get; }
         private readonly IReadOnlyList<int> _idList;
 
-        public Benchmarker(Dictionary<DatabaseType, string> connectionStrings, int iterationCount)
+        public Benchmarker(Dictionary<DatabaseProvider, string> connectionStrings, int iterationCount)
         {
             Random = new Random();
             ConnectionStrings = connectionStrings;
@@ -223,27 +223,27 @@ namespace OrmBenchmark.Core
             return new BenchmarkResult
             {
                 Name = executer.Name,
-                DatabaseType = executer.DatabaseType.ToString(),
+                DatabaseType = executer.DatabaseProvider.ToString(),
                 ExecTime = elapsedMilliseconds,
                 FirstItemExecTime = firstItemExecTime,
                 TestName = testName
             };
         }
 
-        private void PrepareDatabase(DatabaseType databaseType)
+        private void PrepareDatabase(DatabaseProvider databaseType)
         {
             switch (databaseType)
             {
-                case DatabaseType.MySql:
-                case DatabaseType.MySqlConnector:
+                case DatabaseProvider.MySqlData:
+                case DatabaseProvider.MySqlConnector:
                     PrepareMySql();
                     break;
 
-                case DatabaseType.PostgreSql:
+                case DatabaseProvider.Npgsql:
                     PreparePostgreSql();
                     break;
 
-                case DatabaseType.SqlServer:
+                case DatabaseProvider.SystemData:
                     PrepareSqlServer();
                     break;
 
@@ -254,7 +254,7 @@ namespace OrmBenchmark.Core
 
         private void PrepareMySql()
         {
-            using (var conn = new MySqlConnection(ConnectionStrings[DatabaseType.MySql]))
+            using (var conn = new MySqlConnection(ConnectionStrings[DatabaseProvider.MySqlData]))
             {
                 conn.Open();
                 var cmd = conn.CreateCommand();
@@ -312,7 +312,7 @@ END
 
         private void PreparePostgreSql()
         {
-            using (var conn = new NpgsqlConnection(ConnectionStrings[DatabaseType.PostgreSql]))
+            using (var conn = new NpgsqlConnection(ConnectionStrings[DatabaseProvider.Npgsql]))
             {
                 conn.Open();
 
@@ -366,7 +366,7 @@ select create_mytable()";
 
         private void PrepareSqlServer()
         {
-            using (var conn = new SqlConnection(ConnectionStrings[DatabaseType.SqlServer]))
+            using (var conn = new SqlConnection(ConnectionStrings[DatabaseProvider.SystemData]))
             {
                 conn.Open();
 

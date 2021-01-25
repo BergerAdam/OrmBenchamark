@@ -16,7 +16,7 @@ namespace OrmBenchmark.InsightDatabase
 
         public string Name => "Insight Database";
 
-        public DatabaseType DatabaseType { get; private set; }
+        public DatabaseProvider DatabaseProvider { get; private set; }
 
         public void Dispose()
         {
@@ -43,27 +43,28 @@ namespace OrmBenchmark.InsightDatabase
             return conn.QuerySql<Post>("select * from posts where Id=@Id", new { Id }).Single();
         }
 
-        public void Init(string connectionString, DatabaseType databaseType)
+        public void Init(string connectionString, DatabaseProvider databaseType)
         {
-            DatabaseType = databaseType;
+            DatabaseProvider = databaseType;
 
-            conn = DatabaseType.GetAndConfigureConnection(connectionString, (dbConnection, dbtype) =>
+            conn = DatabaseProvider.GetAndConfigureConnection(connectionString, (dbConnection, dbtype) =>
              {
                  switch (dbtype)
                  {
-                     case DatabaseType.MySql:
+                     case DatabaseProvider.MySqlData:
                          MySqlInsightDbProvider.RegisterProvider();
                          break;
 
-                     case DatabaseType.PostgreSql:
+                     case DatabaseProvider.Npgsql:
                          PostgreSQLInsightDbProvider.RegisterProvider();
                          break;
 
-                     case DatabaseType.SqlServer:
+                     case DatabaseProvider.SystemData:
+                     case DatabaseProvider.MicrosoftData:
                          SqlInsightDbProvider.RegisterProvider();
                          break;
 
-                     case DatabaseType.MySqlConnector:
+                     case DatabaseProvider.MySqlConnector:
                          MySqlConnectorInsightDbProvider.RegisterProvider();
                          break;
 
@@ -75,6 +76,6 @@ namespace OrmBenchmark.InsightDatabase
              });
         }
 
-        public bool IsSupported(DatabaseType databaseType) => true;
+        public bool IsSupported(DatabaseProvider databaseType) => true;
     }
 }

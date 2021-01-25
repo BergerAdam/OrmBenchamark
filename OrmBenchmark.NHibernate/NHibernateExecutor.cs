@@ -14,7 +14,7 @@ namespace OrmBenchmark.NHibernate
     public class NHibernateExecutor : IOrmWithCacheExecuter
     {
         public string Name => "NHibernate";
-        public DatabaseType DatabaseType { get; private set; }
+        public DatabaseProvider DatabaseProvider { get; private set; }
 
         private ISession Session
         {
@@ -30,9 +30,9 @@ namespace OrmBenchmark.NHibernate
 
         private ISessionFactory SessionFactory;
 
-        public void Init(string connectionString, DatabaseType databaseType)
+        public void Init(string connectionString, DatabaseProvider databaseType)
         {
-            DatabaseType = databaseType;
+            DatabaseProvider = databaseType;
 
             SessionFactory = Fluently.Configure()
               .Database(CreateConfiguration(connectionString))
@@ -44,18 +44,21 @@ namespace OrmBenchmark.NHibernate
 
         private IPersistenceConfigurer CreateConfiguration(string connectionString)
         {
-            switch (DatabaseType)
+            switch (DatabaseProvider)
             {
-                case DatabaseType.PostgreSql:
+                case DatabaseProvider.Npgsql:
                     return PostgreSQLConfiguration.Standard.ConnectionString(connectionString);
 
-                case DatabaseType.MySql:
+                case DatabaseProvider.MySqlData:
                     return MySQLConfiguration.Standard.Driver<MySqlDataDriver>().ConnectionString(connectionString);
 
-                case DatabaseType.SqlServer:
-                    return MsSqlConfiguration.MsSql2012.ConnectionString(connectionString);
+                case DatabaseProvider.SystemData:
+                    return MsSqlConfiguration.MsSql2012.Driver<SqlClientDriver>().ConnectionString(connectionString);
 
-                case DatabaseType.MySqlConnector:
+                case DatabaseProvider.MicrosoftData:
+                    return MsSqlConfiguration.MsSql2012.Driver<MicrosoftDataSqlClientDriver>().ConnectionString(connectionString);
+
+                case DatabaseProvider.MySqlConnector:
                     return MySQLConfiguration.Standard.Driver<MySqlConnectorDriver>().ConnectionString(connectionString);
 
                 default:
@@ -93,6 +96,6 @@ namespace OrmBenchmark.NHibernate
             SessionFactory.Evict(typeof(Post));
         }
 
-        public bool IsSupported(DatabaseType databaseType) => true;
+        public bool IsSupported(DatabaseProvider databaseType) => true;
     }
 }

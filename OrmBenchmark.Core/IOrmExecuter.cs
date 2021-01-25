@@ -7,11 +7,11 @@ namespace OrmBenchmark.Core
     {
         string Name { get; }
 
-        bool IsSupported(DatabaseType databaseType);
+        bool IsSupported(DatabaseProvider databaseType);
 
-        DatabaseType DatabaseType { get; }
+        DatabaseProvider DatabaseProvider { get; }
 
-        void Init(string connectionString, DatabaseType databaseType);
+        void Init(string connectionString, DatabaseProvider databaseType);
 
         IPost GetItemAsObject(int Id);
 

@@ -10,11 +10,11 @@ namespace OrmBenchmark.SqlSugar
     {
         public string Name => "SqlSugar (Queryable)";
         private SqlSugarClient db;
-        public DatabaseType DatabaseType { get; private set; }
+        public DatabaseProvider DatabaseProvider { get; private set; }
 
-        public void Init(string connectionString, DatabaseType databaseType)
+        public void Init(string connectionString, DatabaseProvider databaseType)
         {
-            DatabaseType = databaseType;
+            DatabaseProvider = databaseType;
             db = new SqlSugarClient(new ConnectionConfig()
             {
                 ConnectionString = connectionString,
@@ -26,15 +26,15 @@ namespace OrmBenchmark.SqlSugar
 
         private DbType GetDbType()
         {
-            switch (DatabaseType)
+            switch (DatabaseProvider)
             {
-                case DatabaseType.PostgreSql:
+                case DatabaseProvider.Npgsql:
                     return DbType.PostgreSQL;
 
-                case DatabaseType.MySql:
+                case DatabaseProvider.MySqlData:
                     return DbType.MySql;
 
-                case DatabaseType.SqlServer:
+                case DatabaseProvider.SystemData:
                     return DbType.SqlServer;
 
                 default:
@@ -69,13 +69,13 @@ namespace OrmBenchmark.SqlSugar
             db.Close();
         }
 
-        private readonly DatabaseType[] Supported = new[]
+        private readonly DatabaseProvider[] Supported = new[]
      {
-           DatabaseType.MySql,
-           DatabaseType.SqlServer,
-           DatabaseType.PostgreSql
+           DatabaseProvider.MySqlData,
+           DatabaseProvider.SystemData,
+           DatabaseProvider.Npgsql
         };
 
-        public bool IsSupported(DatabaseType databaseType) => Supported.Contains(databaseType);
+        public bool IsSupported(DatabaseProvider databaseType) => Supported.Contains(databaseType);
     }
 }
