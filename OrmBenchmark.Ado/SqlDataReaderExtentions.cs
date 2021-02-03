@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 
 namespace OrmBenchmark.Ado
@@ -24,6 +25,16 @@ namespace OrmBenchmark.Ado
                 Counter9 = reader.GetNullableValue<int>(12),
             };
         }
+
+        public static IEnumerable<T> Select<T>(this IDataReader reader,
+                                       Func<IDataReader, T> projection)
+        {
+            while (reader.Read())
+            {
+                yield return projection(reader);
+            }
+        }
+
 
         public static T? GetNullableValue<T>(this IDataReader reader, int index) where T : struct
         {

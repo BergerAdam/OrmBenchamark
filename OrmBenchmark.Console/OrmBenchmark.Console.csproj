@@ -3,8 +3,9 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>OrmBenchmark.ConsoleUI.NetCore</RootNamespace>
-    <AssemblyName>OrmBenchmark.Console.NetCore</AssemblyName>
+    <RootNamespace>OrmBenchmark.Console</RootNamespace>
+    <AssemblyName>OrmBenchmark.Console</AssemblyName>
+    <StartupObject></StartupObject>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

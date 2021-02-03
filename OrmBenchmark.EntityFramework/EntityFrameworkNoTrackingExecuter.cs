@@ -53,6 +53,7 @@ namespace OrmBenchmark.EntityFramework
         {
            DatabaseProvider.MySqlConnector,
            DatabaseProvider.SystemData,
+           DatabaseProvider.MicrosoftData,
            DatabaseProvider.Npgsql
         };
 

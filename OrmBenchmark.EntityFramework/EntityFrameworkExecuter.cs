@@ -53,6 +53,14 @@ namespace OrmBenchmark.EntityFramework
             ctx.Posts.Local.Clear();
         }
 
-        public bool IsSupported(DatabaseProvider databaseType) => true;
+        private readonly DatabaseProvider[] Supported = new[]
+        {
+           DatabaseProvider.MySqlConnector,
+           DatabaseProvider.SystemData,
+           DatabaseProvider.MicrosoftData,
+           DatabaseProvider.Npgsql
+        };
+
+        public bool IsSupported(DatabaseProvider databaseType) => Supported.Contains(databaseType);
     }
 }

@@ -7,7 +7,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\OrmBenchmark.Core\OrmBenchmark.Core.csproj" />
 		<PackageReference Include="PetaPoco.Compiled" Version="6.0.472-beta" />
-		<PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
 	</ItemGroup>
 
 </Project>

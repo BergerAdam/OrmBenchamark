@@ -25,9 +25,10 @@ namespace OrmBenchmark.EntityFramework
                     MySqlDbContextOptionsBuilderExtensions.UseMySql(optionsBuilder, ConnectionString, new MySqlServerVersion(new Version(5, 7, 32)));
                     break;
 
-                case DatabaseProvider.MySqlData:
-                    MySQLDbContextOptionsExtensions.UseMySQL(optionsBuilder,ConnectionString);
-                    break;
+                // TODO: Not working
+                //case DatabaseProvider.MySqlData: 
+                //    MySQLDbContextOptionsExtensions.UseMySQL(optionsBuilder,ConnectionString);
+                //    break;
 
                 case DatabaseProvider.Npgsql:
                     optionsBuilder.UseNpgsql(ConnectionString);

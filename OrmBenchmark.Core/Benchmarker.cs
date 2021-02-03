@@ -244,6 +244,7 @@ namespace OrmBenchmark.Core
                     break;
 
                 case DatabaseProvider.SystemData:
+                case DatabaseProvider.MicrosoftData:
                     PrepareSqlServer();
                     break;
 

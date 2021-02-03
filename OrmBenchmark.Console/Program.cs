@@ -1,28 +1,28 @@
-﻿using Microsoft.Extensions.Configuration;
-using OrmBenchmark.Ado;
-using OrmBenchmark.Core;
-using OrmBenchmark.Dapper;
-using OrmBenchmark.DevExpress;
-using OrmBenchmark.EntityFramework;
-using OrmBenchmark.InsightDatabase;
-using OrmBenchmark.NHibernate;
-using OrmBenchmark.OrmLite;
-using OrmBenchmark.OrmToolkit;
-using OrmBenchmark.PetaPoco;
-using OrmBenchmark.RepoDb;
-using OrmBenchmark.SqlSugar;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.Versioning;
-
-namespace OrmBenchmark.ConsoleUI.NetCore
+﻿namespace OrmBenchmark.Console
 {
+    using Microsoft.Extensions.Configuration;
+    using OrmBenchmark.Ado;
+    using OrmBenchmark.Core;
+    using OrmBenchmark.Dapper;
+    using OrmBenchmark.DevExpress;
+    using OrmBenchmark.EntityFramework;
+    using OrmBenchmark.InsightDatabase;
+    using OrmBenchmark.NHibernate;
+    using OrmBenchmark.OrmLite;
+    using OrmBenchmark.OrmToolkit;
+    using OrmBenchmark.PetaPoco;
+    using OrmBenchmark.RepoDb;
+    using OrmBenchmark.SqlSugar;
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+    using System.Runtime.Versioning;
+
     internal class Program
     {
         private static void Main(string[] args)
@@ -33,23 +33,23 @@ namespace OrmBenchmark.ConsoleUI.NetCore
             IConfigurationRoot configuration = new ConfigurationBuilder()
            .SetBasePath(Directory.GetCurrentDirectory())
            .AddJsonFile("appsettings.json", optional: false).Build();
-            Console.ForegroundColor = ConsoleColor.White;
+            System.Console.ForegroundColor = ConsoleColor.White;
 
             Dictionary<DatabaseProvider, string> connectionStrings =
-            configuration.GetSection("ConnectionStrings").GetChildren().ToList().ToDictionary(e => Enum.Parse<DatabaseProvider>(e.Key), e => e.Value);
+            configuration.GetSection("ConnectionStrings").GetChildren().ToDictionary(e => Enum.Parse<DatabaseProvider>(e.Key), e => e.Value);
             bool warmUp = true;
 
-            Console.WriteLine("ORM Benchmark");
+            System.Console.WriteLine("ORM Benchmark");
 
-            Console.WriteLine("Warm Up: " + warmUp);
-            Console.WriteLine("Connection Strings");
+            System.Console.WriteLine("Warm Up: " + warmUp);
+            System.Console.WriteLine("Connection Strings");
             Dictionary<DatabaseProvider, string> connectionStateToBenchamrk = connectionStrings
                 //.Where(e => e.Key == DatabaseType.MySql)
                 .ToDictionary(e => e.Key, e => e.Value);
 
             foreach (var item in connectionStateToBenchamrk)
             {
-                Console.WriteLine($"{item.Key}: {item.Value}");
+                System.Console.WriteLine($"{item.Key}: {item.Value}");
             }
 
             var singleTestIterations = 500;
@@ -89,7 +89,7 @@ namespace OrmBenchmark.ConsoleUI.NetCore
             benchmarker.RegisterOrmExecuter<NHibernateSqlQueryExecutor>();
 
             var ver = Assembly.GetEntryAssembly()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName;
-            Console.WriteLine(ver);
+            System.Console.WriteLine(ver);
 
             try
             {
@@ -97,38 +97,58 @@ namespace OrmBenchmark.ConsoleUI.NetCore
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Exception occured: " + ex);
+                System.Console.WriteLine("Exception occured: " + ex);
                 LogError(ex);
 
+                
                 throw;
             }
 
-            //                Console.ForegroundColor = ConsoleColor.Red;
 
-            //if (warmUp)
-            //{
-            //    Console.WriteLine("\nPerformance of Warm-up:");
-            //    ShowResults(benchmarker.ResultsWarmUp, false, false);
-            //}
+#if DEBUG
+            Console.WriteLine($"\nPerformance of select and map a row to a POCO object over {singleTestIterations} iterations:");
+            ShowResults(benchmarker.Results, true);
 
-            //Console.WriteLine($"\nPerformance of select and map a row to a POCO object over {singleTestIterations} iterations:");
-            //ShowResults(benchmarker.Results, true);
+            Console.WriteLine("\nPerformance of mapping 5000 rows to POCO objects in one iteration:");
+            ShowResults(benchmarker.ResultsForAllItems);
 
-            //Console.WriteLine("\nPerformance of mapping 5000 rows to POCO objects in one iteration:");
-            //ShowResults(benchmarker.ResultsForAllItems);
+            Console.WriteLine($"\nPerformance of select and map a row to a Dynamic object over {singleTestIterations} iterations:");
+            ShowResults(benchmarker.ResultsForDynamicItem, true);
 
-            //Console.WriteLine($"\nPerformance of select and map a row to a Dynamic object over {singleTestIterations} iterations:");
-            //ShowResults(benchmarker.ResultsForDynamicItem, true);
-
-            //Console.WriteLine("\nPerformance of mapping 5000 rows to Dynamic objects in one iteration:");
-            //ShowResults(benchmarker.ResultsForAllDynamicItems);
-
+            Console.WriteLine("\nPerformance of mapping 5000 rows to Dynamic objects in one iteration:");
+            ShowResults(benchmarker.ResultsForAllDynamicItems);
+#elif RELEASE
             SaveResults(benchmarker, connectionStrings);
+#endif
 
             stopWatch.Stop();
-            Console.WriteLine($"Test take {stopWatch.ElapsedMilliseconds}");
+            System.Console.WriteLine($"Test take {stopWatch.ElapsedMilliseconds}");
+        }
+#if DEBUG
+        private static void ShowResults(List<BenchmarkResult> results, bool showFirstRun = false, bool ignoreZeroTimes = true)
+        {
+            var defaultColor = System.Console.ForegroundColor;
+            //Console.ForegroundColor = ConsoleColor.Gray;
+
+            int i = 0;
+            var list = results.OrderBy(o => o.ExecTime);
+            if (ignoreZeroTimes)
+                list = results.FindAll(o => o.ExecTime > 0).OrderBy(o => o.ExecTime);
+
+            foreach (var result in list)
+            {
+                System.Console.ForegroundColor = i < 3 ? ConsoleColor.Green : ConsoleColor.Gray;
+
+                if (showFirstRun)
+                    System.Console.WriteLine(string.Format("{0,2}-{1,-40} {2,5} ms (First run: {3,3} ms)", ++i, result.Name + " - " + result.DatabaseType, result.ExecTimeMiliseconds, result.FirstItemExecTimeMiliseconds));
+                else
+                    System.Console.WriteLine(string.Format("{0,2}-{1,-40} {2,5} ms", ++i, result.Name + " - " + result.DatabaseType, result.ExecTimeMiliseconds));
+            }
+
+            System.Console.ForegroundColor = defaultColor;
         }
 
+#elif RELEASE
         private static void SaveResults(Benchmarker benchmarker, Dictionary<DatabaseProvider, string> connectionStrings)
         {
             if (!connectionStrings.TryGetValue(DatabaseProvider.SystemData, out string connectionString))
@@ -190,30 +210,7 @@ namespace OrmBenchmark.ConsoleUI.NetCore
                 }
             }
         }
-
-        private static void ShowResults(List<BenchmarkResult> results, bool showFirstRun = false, bool ignoreZeroTimes = true)
-        {
-            var defaultColor = Console.ForegroundColor;
-            //Console.ForegroundColor = ConsoleColor.Gray;
-
-            int i = 0;
-            var list = results.OrderBy(o => o.ExecTime);
-            if (ignoreZeroTimes)
-                list = results.FindAll(o => o.ExecTime > 0).OrderBy(o => o.ExecTime);
-
-            foreach (var result in list)
-            {
-                Console.ForegroundColor = i < 3 ? ConsoleColor.Green : ConsoleColor.Gray;
-
-                if (showFirstRun)
-                    Console.WriteLine(string.Format("{0,2}-{1,-40} {2,5} ms (First run: {3,3} ms)", ++i, result.Name + " - " + result.DatabaseType, result.ExecTimeMiliseconds, result.FirstItemExecTimeMiliseconds));
-                else
-                    Console.WriteLine(string.Format("{0,2}-{1,-40} {2,5} ms", ++i, result.Name + " - " + result.DatabaseType, result.ExecTimeMiliseconds));
-            }
-
-            Console.ForegroundColor = defaultColor;
-        }
-
+#endif
         private static void LogError(Exception ex)
         {
             string message = string.Format("Time: {0}", DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt"));

@@ -9,8 +9,6 @@
     <ProjectReference Include="..\OrmBenchmark.Core\OrmBenchmark.Core.csproj" />
     <PackageReference Include="Dapper" Version="2.0.78" />
     <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
-    <PackageReference Include="MySqlConnector" Version="1.2.1" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
   </ItemGroup>
 
 

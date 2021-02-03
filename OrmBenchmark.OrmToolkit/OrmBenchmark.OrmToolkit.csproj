@@ -9,9 +9,5 @@
     <PackageReference Include="ORMToolkit.Core" Version="1.0.37" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
-  </ItemGroup>
-
 
 </Project>

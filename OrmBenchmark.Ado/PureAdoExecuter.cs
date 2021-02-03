@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Dynamic;
+using System.Linq;
 
 namespace OrmBenchmark.Ado
 {
@@ -42,13 +43,13 @@ namespace OrmBenchmark.Ado
         {
             var cmd = SelectFromPostsByIdCommand(id);
             var obj = new ExpandoObject() as IDictionary<string, object>;
-            using (var reader = cmd.ExecuteReader())
+            using (IDataReader reader = cmd.ExecuteReader())
             {
                 if (reader.Read())
                 {
                     for (int i = 0; i < reader.FieldCount; i++)
-                    {                    
-                            obj.Add(reader.GetName(i), reader.GetValue(i));
+                    {
+                        obj.Add(reader.GetName(i), reader.GetValue(i));
                     }
                     return obj;
                 }
@@ -57,23 +58,15 @@ namespace OrmBenchmark.Ado
             return null;
         }
 
-
-
         public IEnumerable<IPost> GetAllItemsAsObject()
         {
             var cmd = conn.CreateCommand();
             cmd.CommandText = SelectAllPosts();
 
-            List<IPost> list = new List<IPost>();
             using (var reader = cmd.ExecuteReader())
             {
-                while (reader.Read())
-                {
-                    list.Add(reader.MapToPost());
-                };
+                return reader.Select<IPost>(SqlDataReaderExtentions.MapToPost).ToList();
             }
-
-            return list;
         }
 
         public IEnumerable<dynamic> GetAllItemsAsDynamic()
@@ -81,22 +74,17 @@ namespace OrmBenchmark.Ado
             var cmd = conn.CreateCommand();
             cmd.CommandText = SelectAllPosts();
 
-            List<dynamic> list = new List<dynamic>();
-            using (var reader = cmd.ExecuteReader())
-            {
-                while (reader.Read())
-                {
-                    var obj = new ExpandoObject() as IDictionary<string, object>;
+            using var reader = cmd.ExecuteReader();
+            return reader.Select<dynamic>(dataReader =>
+             {
+                 var obj = new ExpandoObject() as IDictionary<string, object>;
+                 for (int i = 0; i < dataReader.FieldCount; i++)
+                 {
+                     obj.Add(reader.GetName(i), reader.GetValue(i));
+                 }
 
-                    for (int i = 0; i < reader.FieldCount; i++)
-                    {
-                        obj.Add(reader.GetName(i), reader.GetValue(i));
-                    }
-                    list.Add(obj);
-                }
-            }
-
-            return list;
+                 return obj;
+             }).ToList();
         }
 
         public void Dispose()
@@ -132,6 +120,7 @@ namespace OrmBenchmark.Ado
                     return "select * from public.\"posts\" ";
 
                 case DatabaseProvider.SystemData:
+                case DatabaseProvider.MicrosoftData:
                     return @"select * from Posts";
             }
 
@@ -150,6 +139,7 @@ namespace OrmBenchmark.Ado
                     return "select * from public.\"posts\" where Id = @Id";
 
                 case DatabaseProvider.SystemData:
+                case DatabaseProvider.MicrosoftData:
                     return @"select * from Posts where Id = @Id";
             }
 
